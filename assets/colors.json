@@ -1,0 +1,19 @@
+{
+    "background": "#0D1021",
+    "backgroundHighlight": "#35428c",
+    "backgroundClicked" : "#828bc4",
+    "aqua": "#3BD9BC",
+    "aquaInactive": "#a1cfc6",
+    "blue": "#6D7DDE",
+    "blueHighlight": "#98a2e3",
+    "blueDisabled": "#282e4f",
+    "nope": "#ff0000",
+    "nopeHighlight": "#ff7575",
+    "gray": "#858585",
+    "magenta": "#F22E8A",
+    "magentaHighlight": "#ed7eb2",
+    "twitch": "#6441a5",
+    "twitchSelected": "#291947",
+    "facebook": "#4267B2",
+    "facebookSelected": "#22355c"
+}

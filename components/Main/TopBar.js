@@ -14,8 +14,11 @@ export default class TopBar extends Component {
                     <View style={{ marginHorizontal: 10 }} >
                         <Text style={{ color: '#ffffff' }}>Bell</Text>
                     </View>
-                    <View style={{ marginLeft: 10 }} >
+                    <View style={{ marginHorizontal: 10 }} >
                         <Text style={{ color: '#ffffff' }}>Disc</Text>
+                    </View>
+                    <View style={{ marginLeft: 10 }} >
+                        <Text style={{ color: '#ffffff' }}>Opts</Text>
                     </View>
                 </View>
             </View>

@@ -8,12 +8,13 @@ import { createMaterialBottomTabNavigator } from '@react-navigation/material-bot
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import Events from './Events';
-import Matches from './Matches';
-import Profile from './Profile';
-import TopBar from '../components/TopBar';
+import Events from './ScreensMain/Events';
+import Matches from './ScreensMain/Matches';
+import Profile from './ScreensMain/Profile';
+import TopBar from '../components/Main/TopBar';
 import BottomBar from '../components/BottomBar';
-import CustomTouchable from '../components/CustomTouchable';
+
+const colors = require('../assets/colors.json');
 
 const Stack = createStackNavigator();
 const Tab = createMaterialTopTabNavigator();
@@ -22,83 +23,86 @@ const MyTheme = {
     colors: {
         ...DarkTheme.colors,
         // primary: 'rgb(2, 201, 162)',
-        background: '#111322'
+        background: colors.background
     },
 };
 
 
 export default class Main extends Component {
+    constructor(props) {
+        super(props)
+        this.stackNav = props.navigation;
+    }
     render() {
+        // console.log(this.stackNav);
         return (
-            <NavigationContainer theme={MyTheme}>
-                <TopBar />
-                <Tab.Navigator
-                    initialRouteName="Events"
-
-                    activeColor='#52C1B3'
-                    tabBarOptions={
-                        {
-                            activeTintColor: '#52C1B3',
-                            inactiveTintColor: '#74827f',
-                            showIcon: true,
-                            indicatorStyle: {
-                                flex: 1,
-                                // flexGrow:2
-                                flexDirection: 'column',
-                                height: 2,
-                                backgroundColor: '#52C1B3',
-                                // marginBottom:72
-                                // marginStart:50
-                            },
-                            style: {
-                                backgroundColor: '#111322'
-                            },
-                            indicatorContainerStyle: {
-                                // borderTopWidth:2,
-                            },
-                            iconStyle: {
-                                width: 40,
-                                alignItems: 'center'
-                            },
+            <View style={{ flex: 1 }}>
+                {/* <NavigationContainer theme={MyTheme} independent={true}> */}
+                    <TopBar />
+                    <Tab.Navigator
+                        backBehavior='history'
+                        initialRouteName="Events"
+                        activeColor={colors.aqua}
+                        tabBarOptions={
+                            {
+                                activeTintColor: colors.aqua,
+                                inactiveTintColor: colors.aquaInactive,
+                                showIcon: true,
+                                indicatorStyle: {
+                                    height: 2,
+                                    backgroundColor: colors.aqua,
+                                    // marginBottom:72  //if enabled, top indicator
+                                },
+                                style: {
+                                    backgroundColor: colors.background
+                                },
+                                indicatorContainerStyle: {
+                                    // borderTopWidth:2,
+                                },
+                                iconStyle: {
+                                    width: 40,
+                                    alignItems: 'center'
+                                },
+                                pressColor: colors.background //if enabled, no Touchable Opacity
+                            }
                         }
-                    }
-                    tabBarPosition='bottom'
+                        tabBarPosition='bottom'
 
-                >
-                    <Tab.Screen
-                        name='Events'
-                        component={Events}
-                        options={{
-                            tabBarLabel: 'Eventos',
-                            tabBarIcon: ({ color }) => (
-                                <MaterialCommunityIcons name="ballot-outline" color={color} size={26} />
-                            ),
-                        }}
-                    />
-                    <Tab.Screen
-                        name='Matches'
-                        component={Matches}
-                        options={{
-                            tabBarLabel: 'Partidas',
-                            tabBarIcon: ({ focused, color }) => (
-                                <MaterialCommunityIcons name="controller-classic" color={color} size={26} />
-                            ),
-                        }}
-                    />
-                    <Tab.Screen
-                        name='Profile'
-                        component={Profile}
-                        options={{
-                            tabBarLabel: 'Perfil',
-                            tabBarIcon: ({ focused, color }) => (
-                                <MaterialCommunityIcons name="account-circle-outline" color={color} size={26} />
-                            ),
-                        }}
-                    />
-                </Tab.Navigator>
-                {/* <BottomBar /> */}
-            </NavigationContainer>
-
+                    >
+                        <Tab.Screen
+                            name='Events'
+                            component={Events}
+                            options={{
+                                tabBarLabel: 'Eventos',
+                                tabBarIcon: ({ color }) => (
+                                    <MaterialCommunityIcons name="ballot-outline" color={color} size={26} />
+                                ),
+                            }}
+                        />
+                        <Tab.Screen
+                            name='Matches'
+                            component={Matches}
+                            options={{
+                                tabBarLabel: 'Partidas',
+                                tabBarIcon: ({ focused, color }) => (
+                                    <MaterialCommunityIcons name="controller-classic" color={color} size={26} />
+                                ),
+                            }}
+                        />
+                        <Tab.Screen
+                            name='Profile'
+                            component={Profile}
+                            options={{
+                                tabBarLabel: 'Perfil',
+                                tabBarIcon: ({ focused, color }) => (
+                                    <MaterialCommunityIcons name="account-circle-outline" color={color} size={26} />
+                                ),
+                            }}
+                        />
+                    </Tab.Navigator>
+                    {/* <BottomBar /> */}
+                {/* </NavigationContainer> */}
+            </View>
         );
     }
 }
