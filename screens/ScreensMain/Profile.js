@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TouchableHighlight, TouchableOpacity, Image, Button, Modal } from 'react-native';
+import { StyleSheet, Text, View, TouchableHighlight, TouchableOpacity, Image, Button, Modal, FlatList } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { NavigationContainer, DarkTheme, useNavigation } from '@react-navigation/native';
@@ -15,6 +15,64 @@ const MyTheme = {
     },
 };
 
+var TransactionsData = [
+    {
+        id: '04-cat-1234',
+        streamer: 'catSkull',
+        platform: 'facebook',
+        exangeType: 'stars',
+        qaploinsUsed: '300',
+        exangeGotted: '150',
+        date: '28-07-20',
+        moment: 'asap',
+        status: 'pending',
+    },
+    {
+        id: 'buy-qaploins-123',
+        exangeType: 'buy',
+        exangeGotted: '600',
+        date: '28-07-20'
+    },
+    {
+        id: '01-fer-aa11',
+        streamer: 'feryfer',
+        platform: 'twitch',
+        exangeType: 'bits',
+        qaploinsUsed: '300',
+        exangeGotted: '100',
+        date: '28-07-20',
+        moment: 'i notify',
+        status: 'pending',
+    },
+    {
+        id: '05-zen-bb22',
+        streamer: 'Zenifo720',
+        platform: 'twitch',
+        exangeType: 'bits',
+        qaploinsUsed: '600',
+        exangeGotted: '205',
+        date: '25-07-20',
+        moment: 'asap',
+        status: 'completed',
+    },
+    {
+        id: 'rewardevent-qaploins-123',
+        exangeType: 'reward',
+        exangeGotted: '50',
+        date: '24-07-20'
+    },
+    {
+        id: '00-rad-cc33',
+        streamer: 'RadAngelZero',
+        platform: 'twitch',
+        exangeType: 'sub',
+        qaploinsUsed: '1750',
+        date: '10-07-20',
+        moment: 'i notify',
+        status: 'completed',
+    },
+]
+
 class Stats extends Component {
     render() {
         return (
@@ -26,10 +84,140 @@ class Stats extends Component {
 }
 
 class Transactions extends Component {
+
+    RenderItem = ({ item, index }) => {
+
+        var cancelHandler = (<View></View>)
+        if (item.status == 'pending') {
+            cancelHandler = (
+                <View style={{ alignSelf: 'flex-end', backgroundColor: '#f00', padding: 10, borderRadius: 20, width: 76, alignItems: 'center', marginRight: -20 }}>
+                    <Text style={{ color: '#fff' }}>Cancelar</Text>
+                </View>
+            )
+        }
+
+        var backgroundColor;
+        var render = (<View></View>)
+        var dataShow = (<View></View>)
+
+        if (item.exangeType == 'reward' || item.exangeType == 'buy') {
+            var type = item.exangeType == 'reward' ? 'Recompensa' : 'Compra'
+            backgroundColor = colors.aqua;
+            dataShow = (
+                <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <View style={{ flex: 1, marginHorizontal: 10, width: 85 }}>
+                        <Text style={{ color: '#000' }}>{type}</Text>
+                    </View>
+                    <View style={{ flex: 1, flexDirection: 'row', marginHorizontal: 10 }}>
+                        <View>
+                            <MaterialCommunityIcons name='plus' color='#000' size={20} />
+                        </View>
+                        <View>
+                            <MaterialCommunityIcons name='currency-usd' color='#000' size={20} />
+                        </View>
+                        <View style={{ marginLeft: -5 }}>
+                            <Text style={{ fontSize: 15 }}>{item.exangeGotted}</Text>
+                        </View>
+                    </View>
+                    <View style={{ flex: 1, marginHorizontal: 10, alignSelf: 'flex-end', width: 60, alignItems: 'flex-end' }}>
+                        <Text>{item.date}</Text>
+                    </View>
+                </View>
+            )
+        } else {
+            if (item.status == 'completed') {
+                backgroundColor = item.platform == 'twitch' ? colors.twitchSelected : colors.facebookSelected
+                var type = item.exangeType == 'sub' ? 'Suscripción' : item.exangeType == 'bits' ? 'Bits' : 'Estrellas'
+                dataShow = (
+                    <View style={{ flex: 1 }}>
+                        <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <View style={{ flex: 1, marginHorizontal: 10, width: 85 }}>
+                                <Text style={{ color: '#fff' }}>{type}</Text>
+                            </View>
+                            <View style={{ flex: 1, flexDirection: 'row', marginHorizontal: 10 }}>
+                                <View>
+                                    <MaterialCommunityIcons name='minus' color='#fff' size={20} />
+                                </View>
+                                <View>
+                                    <MaterialCommunityIcons name='currency-usd' color='#fff' size={20} />
+                                </View>
+                                <View style={{ marginLeft: -5 }}>
+                                    <Text style={{ fontSize: 15, color: '#fff' }}>{item.qaploinsUsed}</Text>
+                                </View>
+                            </View>
+                            <View style={{ flex: 1, marginHorizontal: 10, alignSelf: 'flex-end', width: 60, alignItems: 'flex-end' }}>
+                                <Text style={{ color: '#fff' }}>{item.date}</Text>
+                            </View>
+                        </View>
+                    </View>
+                )
+            } else {
+                if (item.platform == 'twitch') {
+                    backgroundColor = colors.twitch;
+                } else {
+                    backgroundColor = colors.facebook
+                }
+
+                var type = item.exangeType == 'sub' ? 'Suscripción' : item.exangeType == 'bits' ? 'Bits' : 'Estrellas'
+
+                dataShow = (
+                    <View style={{ flex: 1 }}>
+                        <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <View style={{ flex: 1, marginHorizontal: 10, width: 85 }}>
+                                <Text style={{ color: '#fff' }}>{type}</Text>
+                            </View>
+                            <View style={{ flex: 1, flexDirection: 'row', marginHorizontal: 10, marginLeft: 37 }}>
+                                <View>
+                                    <MaterialCommunityIcons name='minus' color='#fff' size={20} />
+                                </View>
+                                <View>
+                                    <MaterialCommunityIcons name='currency-usd' color='#fff' size={20} />
+                                </View>
+                                <View style={{ marginLeft: -5 }}>
+                                    <Text style={{ fontSize: 15, color: '#fff' }}>{item.qaploinsUsed}</Text>
+                                </View>
+                            </View>
+                            {cancelHandler}
+                            <View style={{ flex: 1, marginHorizontal: 10, alignSelf: 'center', width: 60, alignItems: 'flex-end' }}>
+                                <Text style={{ color: '#fff' }}>{item.date}</Text>
+                            </View>
+                        </View>
+                    </View>
+                )
+            }
+        }
+
+        return (
+            <View style={{ padding: 10, borderRadius: 20, backgroundColor: backgroundColor, }} >
+                <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+                    {dataShow}
+                </View>
+            </View >
+        )
+    }
+
+    separator = () => {
+        return (
+            <View style={{ height: 10 }}>
+
+            </View>
+        )
+    }
+
     render() {
         return (
-            <View>
-                <Text style={{ color: '#fff' }}>Transacciones</Text>
+            <View style={{ flex: 1 }}>
+                <FlatList
+                    data={TransactionsData}
+                    renderItem={this.RenderItem}
+                    keyExtractor={(item) => item.id}
+                    // extraData={this.state.selectedId}
+                    style={{ width: '100%', borderRadius: 20, height: 300 }}
+                    showsVerticalScrollIndicator={true}
+                    ItemSeparatorComponent={this.separator}
+                    bounces={true}
+                    indicatorStyle={'white'}
+                />
             </View>
         )
     }
@@ -40,6 +228,36 @@ class ProfileButtons extends Component {
     constructor(props) {
         super(props)
         this.navigation = props.navigation;
+    }
+
+    state = {
+
+    }
+
+    redeemButton = () => {
+
+        var disableButton = this.props.Qoins < 270;
+        var background = disableButton ? colors.blueDisabled : colors.blue
+
+        return (
+            <View style={{}}>
+                <TouchableHighlight
+                    onPress={() => {
+                        this.navigation.dangerouslyGetParent().navigate('Streamer',
+                            {
+                                Qoins: this.props.Qoins,
+                                transactionDoneFunction: this.props.transactionDoneFunction
+                            });
+                    }}
+                    style={{ backgroundColor: background, borderRadius: 20, padding: 10 }}
+                    underlayColor={colors.blueHighlight}
+                    disabled={disableButton}
+                >
+                    <Text style={{ color: '#fff' }}>CANJEAR</Text>
+                </TouchableHighlight>
+            </View>
+        )
+
     }
 
     render() {
@@ -57,17 +275,7 @@ class ProfileButtons extends Component {
                         <Text style={{ color: '#fff' }}>ABONAR</Text>
                     </TouchableHighlight>
                 </View>
-                <View style={{}}>
-                    <TouchableHighlight
-                        onPress={() => {
-                            this.navigation.dangerouslyGetParent().navigate('Streamer', { Qoins: this.props.Qoins });
-                        }}
-                        style={{ backgroundColor: colors.blue, borderRadius: 20, padding: 10 }}
-                        underlayColor={colors.blueHighlight}
-                    >
-                        <Text style={{ color: '#fff' }}>CANJEAR</Text>
-                    </TouchableHighlight>
-                </View>
+                <this.redeemButton />
                 {/* <Text style={{ color: '#fff', textAlign: 'center' }}>Buttons</Text> */}
             </View>
 
@@ -86,16 +294,31 @@ class SelectPlatform extends Component {
 export default class Profile extends Component {
     constructor(props) {
         super(props)
+        this.transactionData = props.route.params;
         this.navigation = props.navigation;
-        this.Qoins = 600;
     }
 
     state = {
+        Qoins: 600,
         buyWindowVisible: false,
+        transactionStatusWindow: false
     }
 
     setBuyWindowVisible = (visible) => {
         this.setState({ buyWindowVisible: visible })
+    }
+
+    showTransactionStatus = () => {
+        this.setState({ transactionStatusWindow: true })
+    }
+
+    transactionDone = (Qoins) => {
+        this.setState({ transactionStatusWindow: true });
+        this.discontQoins(Qoins);
+    }
+
+    discontQoins = (qoins) => {
+        this.setState({ Qoins: this.state.Qoins - qoins });
     }
 
     render() {
@@ -107,14 +330,27 @@ export default class Profile extends Component {
                         transparent={true}
                         visible={this.state.buyWindowVisible}
                         onRequestClose={() => {
-                            Alert.alert("Modal has been closed.");
+                            this.setBuyWindowVisible(false);
                         }}
                         statusBarTranslucent={true}
                     >
                         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', alignContent: 'center', backgroundColor: '#00000060' }}>
                             <View style={{ backgroundColor: colors.background, margin: 20, borderRadius: 20, padding: 35 }}>
                                 <View>
-                                    <Text style={{ textAlign: 'center' }}>Webos</Text>
+                                    <Text style={{ textAlign: 'center', fontSize: 40, color: '#fff' }}>Qaploins</Text>
+
+                                    <View style={{ flexDirection: 'row', marginHorizontal: 10, justifyContent: 'center', marginBottom: 15, alignItems: 'center' }}>
+                                        <View>
+                                            <MaterialCommunityIcons name='plus' color='#fff' size={30} />
+                                        </View>
+                                        <View>
+                                            <MaterialCommunityIcons name='currency-usd' color='#fff' size={30} />
+                                        </View>
+                                        <View style={{ marginLeft: -5, }}>
+                                            <Text style={{ fontSize: 30, color: '#fff' }}>300</Text>
+                                        </View>
+                                    </View>
+
                                     <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
                                         <View style={{ marginHorizontal: 10 }}>
                                             <View style={{}}>
@@ -133,13 +369,45 @@ export default class Profile extends Component {
                                             <View style={{}}>
                                                 <TouchableHighlight
                                                     onPress={() => {
-                                                        this.Qoins = this.Qoins + 300;
+                                                        this.setState({ Qoins: this.state.Qoins + 300 });
                                                         this.setBuyWindowVisible(false);
                                                     }}
                                                     style={{ backgroundColor: colors.blue, borderRadius: 20, padding: 10 }}
                                                     underlayColor={colors.blueHighlight}
                                                 >
                                                     <Text style={{ color: '#fff' }}>COMPRAR</Text>
+                                                </TouchableHighlight>
+                                            </View>
+                                        </View>
+                                    </View>
+                                </View>
+                            </View>
+                        </View>
+                    </Modal>
+                    <Modal
+                        animationType='fade'
+                        transparent={true}
+                        visible={this.state.transactionStatusWindow}
+                        onRequestClose={() => {
+                        }}
+                        statusBarTranslucent={true}
+                    >
+                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', alignContent: 'center', backgroundColor: '#00000060' }}>
+                            <View style={{ backgroundColor: colors.background, margin: 20, borderRadius: 20, padding: 35 }}>
+                                <View>
+                                    <Text style={{ textAlign: 'center', fontSize: 40, color: '#fff' }}>Transacción exitosa</Text>
+
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+                                        <View style={{ marginHorizontal: 10 }}>
+                                            <View style={{}}>
+                                                <TouchableHighlight
+                                                    onPress={() => {
+                                                        this.setState({ transactionStatusWindow: false })
+                                                    }}
+                                                    style={{ backgroundColor: colors.blue, borderRadius: 20, padding: 10 }}
+                                                    underlayColor={colors.blueHighlight}
+                                                >
+                                                    <Text style={{ color: '#fff' }}>CONTINUAR</Text>
                                                 </TouchableHighlight>
                                             </View>
                                         </View>
@@ -201,10 +469,10 @@ export default class Profile extends Component {
                     <View style={{ flex: 1, justifyContent: 'center' }}>
                         <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                             <MaterialCommunityIcons name='currency-usd' size={32} color='#fff' />
-                            <Text style={{ color: '#fff', textAlign: 'center', fontSize: 26, marginLeft: -6 }}>{this.Qoins}</Text>
+                            <Text style={{ color: '#fff', textAlign: 'center', fontSize: 26, marginLeft: -6 }}>{this.state.Qoins}</Text>
                         </View>
 
-                        <ProfileButtons buyWindowVisible={this.setBuyWindowVisible} navigation={this.navigation} Qoins={this.Qoins} />
+                        <ProfileButtons buyWindowVisible={this.setBuyWindowVisible} navigation={this.navigation} Qoins={this.state.Qoins} transactionDoneFunction={this.transactionDone} />
 
                     </View>
                 </View>

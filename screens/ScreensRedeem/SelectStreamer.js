@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TouchableHighlight, FlatList, SafeAreaView, TextInput, Button, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, Text, View, TouchableHighlight, FlatList, SafeAreaView, TextInput, Button, KeyboardAvoidingView, Keyboard, BackHandler } from 'react-native';
 
 const colors = require('../../assets/colors.json');
 
@@ -101,7 +101,27 @@ export default class SelectStreamer extends Component {
         selectedIndex: -1,
         customStreamerName: '',
         customPlatform: '',
-        nextDisabled: true
+        nextDisabled: true,
+        hideAfiliate: false
+    }
+
+    _keyboardDidHide = () => {
+        if (this.state.hideAfiliate) {
+            this.setState({ hideAfiliate: false });
+            Keyboard.dismiss();
+        }
+        // console.log('back')
+    };
+
+
+
+    componentDidMount() {
+
+        this.keyboardHandler = Keyboard.addListener("keyboardDidHide", this._keyboardDidHide);
+    }
+
+    componentWillUnmount() {
+        this.keyboardHandler.remove();
     }
 
     enableNext = (selectedIndex, customStreamerName, customPlatform) => {
@@ -146,32 +166,38 @@ export default class SelectStreamer extends Component {
     afiliatedStreamers = () => {
         var customBackground = customBackground = this.state.selectedIndex >= 0 ? colors.backgroundHighlight : colors.background;
 
-        return (
-            <View
-                style={{
-                    borderWidth: 2,
-                    borderColor: colors.aqua,
-                    width: '80%',
-                    // height: '60%',
-                    paddingVertical: 0,
-                    borderRadius: 20,
-                    alignItems: 'center',
-                    backgroundColor: customBackground,
-                }}
-            >
-                <FlatList
-                    data={DATA}
-                    renderItem={this.RenderItem}
-                    keyExtractor={(item) => item.id}
-                    extraData={this.state.selectedId}
-                    style={{ width: '100%', borderRadius: 20, height: 300 }}
-                    showsVerticalScrollIndicator={true}
-                    ItemSeparatorComponent={StreamersSeparator}
-                    bounces={true}
-                    indicatorStyle={'white'}
-                />
-            </View>
-        )
+        if (this.state.hideAfiliate) {
+            return (
+                <View></View>
+            )
+        } else {
+            return (
+                <View
+                    style={{
+                        borderWidth: 2,
+                        borderColor: colors.aqua,
+                        width: '80%',
+                        // height: '60%',
+                        paddingVertical: 0,
+                        borderRadius: 20,
+                        alignItems: 'center',
+                        backgroundColor: customBackground,
+                    }}
+                >
+                    <FlatList
+                        data={DATA}
+                        renderItem={this.RenderItem}
+                        keyExtractor={(item) => item.id}
+                        extraData={this.state.selectedId}
+                        style={{ width: '100%', borderRadius: 20, height: 300 }}
+                        showsVerticalScrollIndicator={true}
+                        ItemSeparatorComponent={StreamersSeparator}
+                        bounces={true}
+                        indicatorStyle={'white'}
+                    />
+                </View>
+            )
+        }
     }
 
     customPlatform = () => {
@@ -218,8 +244,11 @@ export default class SelectStreamer extends Component {
                     }}
                     value={this.value}
                     onChangeText={tx => { this.setState({ customStreamerName: tx }); this.enableNext(-1, tx, this.state.customPlatform); }}
-                    onFocus={() => { this.setState({ selectedId: 'custom', selectedIndex: -1, nextEnabled: true }); this.enableNext(-1, this.state.customStreamerName, this.state.customPlatform); }}
-                    onBlur={() => console.log('deselected')}
+                    onFocus={() => { this.setState({ selectedId: 'custom', selectedIndex: -1, nextEnabled: true, hideAfiliate: true }); this.enableNext(-1, this.state.customStreamerName, this.state.customPlatform); }}
+                    onBlur={() => {
+                        this.setState({ hideAfiliate: false });
+                    }}
+                    on
                 />
                 <View style={{ flexDirection: 'row', justifyContent: 'space-around', paddingTop: 20 }}>
                     <View style={{ marginHorizontal: 20, width: '35%' }}>
@@ -271,7 +300,8 @@ export default class SelectStreamer extends Component {
                                     customStreamerName: this.state.customStreamerName,
                                     customPlatform: this.state.customPlatform,
                                     data: DATA,
-                                    Qoins: this.props.route.params.Qoins
+                                    Qoins: this.props.route.params.Qoins,
+                                    transactionDoneFunction: this.props.route.params.transactionDoneFunction
                                 })
                         }}
                     >
@@ -286,7 +316,7 @@ export default class SelectStreamer extends Component {
         return (
             <View style={{ flex: 1, justifyContent: 'space-between' }}>
                 <View>
-                    <View style={{ marginTop: 20, marginVertical: 10, alignItems: 'center', justifyContent: 'center' }}>
+                    <View style={{ marginTop: 30, marginVertical: 10, alignItems: 'center', justifyContent: 'center' }}>
                         <Text style={{ color: '#fff', fontSize: 30 }}>STREAMERS</Text>
                     </View>
                     <View style={{ justifyContent: 'flex-start', }}>
@@ -300,12 +330,12 @@ export default class SelectStreamer extends Component {
                                     Al apoyar a streamers afiliados te descontamos el <Text style={{ color: colors.aqua }}>10%</Text> de los <Text style={{ color: colors.aqua }}>Qaploins</Text> que gastes
                                 </Text>
                             </View>
-                            </View>
-                            <this.customPlatform />
                         </View>
+                        <this.customPlatform />
                     </View>
-                    <this.NextButton />
                 </View>
+                <this.NextButton />
+            </View>
         )
     }
 }
