@@ -1,2 +1,2 @@
-# PruebaQapla
-Una prueba de Qapla
+# Qapla Skill Test
+Ability test for work in qapla
